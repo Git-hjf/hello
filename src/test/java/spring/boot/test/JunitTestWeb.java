@@ -1,8 +1,9 @@
 package spring.boot.test;
 
-import org.junit.Assert;
+
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,12 +14,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.URL;
 
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 @RunWith(SpringRunner.class)
-//配置本地随机端口，服务器会选择一个空闲的端口使用，避免端口冲突
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TestApplicationTests {
+public class JunitTestWeb {
 
     @LocalServerPort
     private int port;
@@ -28,20 +28,34 @@ class TestApplicationTests {
     @Autowired
     private TestRestTemplate template;
 
-	@Test
-	void contextLoads() {
-	}
-
     @Before
     public void setUp() throws Exception {
         this.base = new URL("http://localhost:" + port + "/");
     }
 
     @Test
-    public void getHello() {
+    public void getHello(){
         ResponseEntity<String> response = template.getForEntity(base.toString(),
                 String.class);
-        Assert.assertThat(response.getBody(), equalTo("Greetings from Spring Boot!"));
+        //返回来的不是"Greetings from Spring Boot!",所以报错是正常的
+        MatcherAssert.assertThat(response.getBody(), equalTo("Greetings from Spring Boot!"));
+    }
+
+    /**
+     * 获取雅阁车系的基本信息
+     */
+    @Test
+    public void getSerialGroup(){
+        String serialGroupUrl = "http://price.pcauto.com.cn/price/api/v1/serialgroup/atom/90/basic_info";
+        ResponseEntity<String> response = template.getForEntity(serialGroupUrl,
+                String.class);
+        System.out.println(response.getBody());
+    }
+
+
+    @Test
+    public void sayHi(){
+        System.out.println("hi!");
     }
 
 }

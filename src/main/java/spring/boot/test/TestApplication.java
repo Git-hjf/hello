@@ -26,7 +26,7 @@ public class TestApplication {
             int i = 1;
             for (String beanName : beanNames) {
                 i++;
-                //System.out.println(i+"."+beanName);
+                System.out.println(i+"."+beanName);
             }
 
         };
